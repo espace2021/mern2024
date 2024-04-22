@@ -40,8 +40,7 @@ export default function Register() {
   const [password2, setPassword2] = useState("");
   const [avatar, setAvatar] = useState("");
 
-  //const {user,isSuccess, isError} =useSelector((state) => state.auth);
-
+ 
 
 const handleSubmit = (e) => {
   e.preventDefault()
@@ -59,7 +58,7 @@ const handleSubmit = (e) => {
         dispatch(register(userData)).then((res) => {
             navigate('/login')
         })
-        .catch((err) => {alert("Erreur !");console.log(err)})
+        .catch((err) => {alert("Register with errors");console.log(err)})
 
 }
 };

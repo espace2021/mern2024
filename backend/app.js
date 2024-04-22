@@ -21,7 +21,7 @@ app.use(express.json());
 mongoose.set("strictQuery", false);
 
 // Connexion à la base données
-mongoose.connect(process.env.DATABASECLOUD,{
+mongoose.connect(process.env.DATABASE,{
  useNewUrlParser: true,
  useUnifiedTopology: true
  })
@@ -36,7 +36,6 @@ res.send("bonjour");
 });
 
 //les routes
-
 
 app.use('/api/categories', categorieRouter);
 

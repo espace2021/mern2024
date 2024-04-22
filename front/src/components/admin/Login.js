@@ -38,7 +38,7 @@ export default function Login() {
   const navigate = useNavigate();
 const dispatch = useDispatch();
 
-const {isSuccess,user} = useSelector((state) =>state.auth);
+const {isSuccess,user,errorMessage} = useSelector((state) =>state.auth);
 
 const[email,setEmail]=useState('');
 const[password,setPassword]=useState('');
@@ -47,7 +47,9 @@ const[password,setPassword]=useState('');
   useEffect(() => {
     if (isSuccess && user) { 
         if(user.role==="admin") navigate('/dashboard');
-        else navigate('/')
+     else { 
+        //  alert(errorMessage)
+          navigate('/')}
       }
   }, [ navigate,isSuccess, user])
 

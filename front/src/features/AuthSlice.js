@@ -69,15 +69,17 @@ reducers: {
         state.isLoading=false;
         state.status=action.payload.success;
         state.isSuccess=true
+        state.errorMessage=action.error.message
         })
     .addCase(register.rejected,(state, action) => { 
         state.isLoading=false;
         state.isError=true
         state.isSuccess=false
         state.user=null
+        state.errorMessage=action.error.message
         MySwal.fire({
             icon: 'error',
-            title: 'Error',
+            title: state.errorMessage,
             })
         })
     .addCase(login.pending, (state, action) => {
@@ -91,19 +93,22 @@ reducers: {
         localStorage.setItem("CC_Token",action.payload.token)
         localStorage.setItem('refresh_token', action.payload.refreshToken);
         state.isSuccess=true;
+        state.errorMessage=null
         /* MySwal.fire({
             icon: 'success',
             title: 'Connection was successful',
             })*/
         })
-    .addCase(login.rejected, (state, action) => {
+    .addCase(login.rejected, (state, action) => { console.log(action)
         state.isLoggedIn = false;
         state.user = null;
-      state.status=action.payload.message;
+      //state.status=action.payload.message;
+      state.status=false
+      state.errorMessage=action.error.message
       state.isSuccess=false;
         MySwal.fire({
             icon: 'error',
-            title: action.payload.message,
+            title: state.errorMessage,
             })
             
         })

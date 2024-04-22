@@ -106,8 +106,8 @@ transporter.sendMail(mailOption,function(error,info){
 // afficher la liste des utilisateurs.
 router.get('/', async (req, res, )=> {
   try {
-      const users = await User.find().select("-password");              
-      return res.status(200).send({ success: true, message: "Account created successfully", user: users })
+      const users = await User.find();              
+      return res.status(200).send({ success: true, message: "Users found successfully", users: users })
  
   } catch (error) {
       res.status(404).json({ message: error.message });
@@ -118,7 +118,7 @@ router.get('/', async (req, res, )=> {
 
 // se connecter
 
-router.post('/login', async (req, res) =>  {
+router.post('/login', async (req, res) =>  { 
   let expires = Date.now() + 1
   try {
       let { email, password } = req.body
@@ -130,7 +130,7 @@ router.post('/login', async (req, res) =>  {
        const user = await User.findOne({email});
 
          const isMatch=await bcrypt.compare(password,user.password);
-           if(!isMatch) {res.status(400).json({msg:'mot de passe incorrect'});
+           if(!isMatch) {res.status(400).send({success: false,message:'mot de passe incorrect'});
            return} ;
   
       if (!user) {
@@ -143,7 +143,7 @@ router.post('/login', async (req, res) =>  {
      if (isCorrectPassword) {
 
               delete user._doc.password
-              if (!user.isActive) return res.status(200).send({ success: false, message: 'Your account is inactive, Please contact your administrator' })
+              if (!user.isActive) return res.status(400).send({ success: false, message: 'Your account is inactive, Please contact your administrator' })
 
               const token = generateAccessToken(user);
  
@@ -151,7 +151,7 @@ router.post('/login', async (req, res) =>  {
        
           
 
-              return res.status(200).send({ success: true, user, token,refreshToken,expiresIn: expires  })
+              return res.status(200).send({ success: true, user, token,refreshToken,expiresIn: expires , message: "User accepted"  })
 
           } else {
 
@@ -162,7 +162,7 @@ router.post('/login', async (req, res) =>  {
       }
 
   } catch (err) {
-      return res.status(404).send({ success: false, message: err.message })
+      return res.status(405).send({ success: false, message: err.message })
   }
 
  });

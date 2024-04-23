@@ -116,10 +116,8 @@ router.get('/', async (req, res, )=> {
 });
 
 
-// se connecter
-
-router.post('/login', async (req, res) =>  { 
-  let expires = Date.now() + 1
+// login
+router.post('/login', async (req, res) =>  {
   try {
       let { email, password } = req.body
 
@@ -127,45 +125,32 @@ router.post('/login', async (req, res) =>  {
           return res.status(404).send({ success: false, message: "All fields are required" })
       }
 
-       const user = await User.findOne({email});
-
-         const isMatch=await bcrypt.compare(password,user.password);
-           if(!isMatch) {res.status(400).send({success: false,message:'mot de passe incorrect'});
-           return} ;
-  
+      let user = await User.findOne({ email })
+      
       if (!user) {
 
           return res.status(404).send({ success: false, message: "Account doesn't exists" })
 
       } else {
 
-    let isCorrectPassword = await bcrypt.compare(password, user.password)
-     if (isCorrectPassword) {
+    let isMatch = await bcrypt.compare(password, user.password)
+    if(!isMatch) {res.status(400).json({success: false, message:'Please verify your credentials'}); return;}
 
-              delete user._doc.password
-              if (!user.isActive) return res.status(400).send({ success: false, message: 'Your account is inactive, Please contact your administrator' })
+     const token = generateToken(user);
+     const refreshToken = generateRefreshToken(user);
 
-              const token = generateAccessToken(user);
- 
-             const refreshToken = generateRefreshToken(user);
-       
-          
+     res.status(200).json({ 
+      success: true, 
+      token,
+      refreshToken,
+      user
+  })
+ }
+} catch (error) {
+  res.status(404).json({ message: error.message });
+}
+});
 
-              return res.status(200).send({ success: true, user, token,refreshToken,expiresIn: expires , message: "User accepted"  })
-
-          } else {
-
-              return res.status(404).send({ success: false, message: "Please verify your credentials" })
-
-          }
-
-      }
-
-  } catch (err) {
-      return res.status(405).send({ success: false, message: err.message })
-  }
-
- });
 
 
 // se connecter

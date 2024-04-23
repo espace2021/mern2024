@@ -13,7 +13,7 @@ const res= await signup(user);
 return res.data
 }
 catch (error) {
-return rejectWithValue(error.data.message)
+return rejectWithValue(error.response.message)
 }});
 
 export const login = createAsyncThunk(
@@ -25,9 +25,10 @@ export const login = createAsyncThunk(
        
     return res.data ;
     } 
-    catch (error) {
+    catch (error) { 
         
-        return rejectWithValue(error.response.data);
+        return rejectWithValue(error.response.data.message);
+      
 }});
 
 export const logout = createAsyncThunk("auth/logout", () => {
@@ -99,19 +100,17 @@ reducers: {
             title: 'Connection was successful',
             })*/
         })
-    .addCase(login.rejected, (state, action) => { console.log(action)
-        state.isLoggedIn = false;
-        state.user = null;
-      //state.status=action.payload.message;
-      state.status=false
-      state.errorMessage=action.error.message
-      state.isSuccess=false;
-        MySwal.fire({
-            icon: 'error',
-            title: state.errorMessage,
+    .addCase(register.rejected,(state, action) => {
+            state.isLoading=false;
+            state.isError=true
+            state.isSuccess=false
+            state.user=null
+            state.errorMessage=action.error.message
+            MySwal.fire({
+                icon: 'error',
+                title: state.errorMessage,
+                })
             })
-            
-        })
     .addCase(logout.fulfilled, (state, action) => {
         state.isLoggedIn = false;
         state.user = null;
